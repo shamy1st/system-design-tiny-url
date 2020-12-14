@@ -123,5 +123,34 @@ Memory for cache    | 170GB
 
 ## 7. Low-level Design
 
+* The problem we are solving here is, how to generate a short and unique key for a given URL.
+
+### Encoding Actual URL
+
+* Since we expect to have 500M new URLs per month, then we need **30 billion per 5 years**
+* Using base64 encoding, a **6 letters** long key would result in 64^6 =~ **68.7 billion possible strings**
+* In base64 each **6 bit encoded to 1 character**, because 64 = 2^6
+* If we use the MD5 algorithm as our hash function, it’ll produce a **128-bit** hash value.
+* 128 bit / 6 bit **> 21 character**
+* Now we only have space for 6 characters per short key.
+* We can take the **first 6 letters for the key**.
+* This could result in **key duplication**.
+* To resolve that, we can choose some other characters out of the encoding string or swap some characters.
+* **Problems for this solution**
+      1. If multiple users enter the same URL, they can get the same shortened URL, which is not acceptable.
+      2. What if parts of the URL are URL-encoded? (identical except for the URL encoding)
+
+            http://www.educative.io/distributed.php?id=design
+            http://www.educative.io/distributed.php%3Fid%3Ddesign 
+
+### Generating Keys Offline
+
+* We can have a standalone Key Generation Service (KGS) that generates random six-letter strings beforehand and stores them in a database (let’s call it key-DB).
+* Whenever we want to shorten a URL, we will just take one of the already-generated keys and use it.
+* This approach will make things quite simple and fast.
+* Not only are we not encoding the URL, but we won’t have to worry about duplications or collisions.
+* KGS will make sure all the keys inserted into key-DB are unique.
+* What would be the key-DB size? 6 (characters per key) * 68.7B (unique keys) = **412 GB**
+
 ## 8. Bottlenecks
 
