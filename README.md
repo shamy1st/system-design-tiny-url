@@ -86,6 +86,8 @@ Memory for cache    | 170GB
 
 ## 4. High-level Design
 
+![](https://github.com/shamy1st/system-design-tiny-url/blob/main/hld.png)
+
 ## 5. Database Model
 
 ## 6. System Interface
