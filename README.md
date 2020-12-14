@@ -158,6 +158,24 @@ Memory for cache    | 170GB
 
 ### Data Partitioning and Replication
 
+* To scale out our DB, we need to partition it so that it can store information about billions of URLs.
+* We need to come up with a partitioning scheme that would divide and store our data into different DB servers.
+
+1. **Range Based Partitioning**
+
+      * We can store URLs in separate partitions based on the first letter of the hash key.
+      * Hence we save all the URLs starting with letter ‘A’ (and ‘a’) in one partition, save those that start with letter ‘B’ in another partition and so on.
+      * We can even combine certain less frequently occurring letters into one database partition.
+      * The main problem with this approach is that it can lead to unbalanced DB servers.
+
+2. **Hash-Based Partitioning**
+
+      * We take a hash of the object we are storing.
+      * We then calculate which partition to use based upon the hash.
+      * In our case, we can take the hash of the ‘key’ or the short link to determine the partition in which we store the data object.
+      * Our hashing function will randomly distribute URLs into different partitions (e.g., our hashing function can always map any ‘key’ to a number between [1…256]), and this number would represent the partition in which we store our object.
+      * This approach can still lead to overloaded partitions, which can be solved by using Consistent Hashing.
+
 ### Cache
 
 ### Load Balancer (LB)
