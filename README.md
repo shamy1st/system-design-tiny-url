@@ -74,6 +74,7 @@ Difficulty Level: Easy
 ### High-level Estimates
 
 * Assuming 500 million new URLs per month and 100:1 read:write ratio, following is the summary of the high level estimates for our service:
+
 Metric              | Estimate
 --------------------|---------
 New URLs            | 200/s
