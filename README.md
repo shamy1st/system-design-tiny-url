@@ -60,8 +60,28 @@ Difficulty Level: Easy
 
 ### Bandwidth estimates
 
+* For write requests, since we expect **200 New URLs per second**, total incoming data for our service will be: 200 * 500 bytes = **100KB/sec**
+* For read requests, since every second we expect **~20K URLs redirections**, total outgoing data for our service will be: 20K * 500 bytes = **10MB/sec**
+
 ### Memory estimates
 
+* If we want to cache some of the hot URLs that are frequently accessed, how much memory will we need to store them?
+* If we follow the 80-20 rule, meaning 20% of URLs generate 80% of traffic, we would like to cache these 20% hot URLs.
+* Since we have 20K requests per second, we will be getting 1.7 billion requests per day: 20K * 24 * 60 * 60 =~ **1.7 Billion request/day**
+* To cache 20% of these requests, we will need **170GB of memory**: 0.2 * 1.7 billion * 500 bytes = ~170GB.
+* One thing to note here is that since there will be a lot of duplicate requests (of the same URL), therefore, our actual memory usage will be less than 170GB.
+
+### High-level Estimates
+
+* Assuming 500 million new URLs per month and 100:1 read:write ratio, following is the summary of the high level estimates for our service:
+Metric              | Estimate
+--------------------|---------
+New URLs            | 200/s
+URL redirections    | 20K/s
+Incoming data       | 100KB/s
+Outgoing data       | 10MB/s
+Storage for 5 years | 15TB
+Memory for cache    | 170GB
 
 ## 4. High-level Design
 
