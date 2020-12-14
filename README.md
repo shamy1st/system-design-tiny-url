@@ -88,8 +88,24 @@ Memory for cache    | 170GB
 
 ![](https://github.com/shamy1st/system-design-tiny-url/blob/main/hld.png)
 
-## 5. Database Model
+## 5. System APIs
 
-## 6. System Interface
+* We can have SOAP or REST APIs to expose the functionality of our service.
 
+1. **createURL**(api_dev_key, original_url, custom_alias=None, user_name=None, expire_date=None)
 
+      **Parameters**:
+      * **api_dev_key** (string): The API developer key of a registered account. This will be used to, among other things, throttle users based on their allocated quota.
+      * **original_url** (string): Original URL to be shortened.
+      * **user_name** (string): Optional user name to be used in the encoding.
+      * **expire_date** (string): Optional expiration date for the shortened URL.
+
+      **Return**: (string)
+      A successful insertion returns the shortened URL; otherwise, it returns an error code.
+
+2. **deleteURL**(api_dev_key, url_key)
+
+      * Where “url_key” is a string representing the shortened URL to be retrieved. 
+      * A successful deletion returns ‘URL Removed’.
+
+## 6. Database Model
