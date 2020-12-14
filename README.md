@@ -109,3 +109,19 @@ Memory for cache    | 170GB
       * A successful deletion returns ‘URL Removed’.
 
 ## 6. Database Model
+
+### Schema 
+1. table for storing information about the URL mappings. 
+2. table for the user’s data who created the short link.
+
+![](https://github.com/shamy1st/system-design-tiny-url/blob/main/database-model.png)
+
+### Which kind of database should we use?
+* Since we anticipate storing billions of rows, and we don’t need to use relationships between objects
+* NoSQL store like DynamoDB, Cassandra or Riak is a better choice.
+* NoSQL would also be easier to scale.
+
+## 7. Low-level Design
+
+## 8. Bottlenecks
+
