@@ -152,5 +152,7 @@ Memory for cache    | 170GB
 * KGS will make sure all the keys inserted into key-DB are unique.
 * What would be the key-DB size? 6 (characters per key) * 68.7B (unique keys) = **412 GB**
 
+![](https://github.com/shamy1st/system-design-tiny-url/blob/main/lld.png)
+
 ## 8. Bottlenecks
 
