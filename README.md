@@ -125,7 +125,7 @@ Memory for cache    | 170GB
 
 * The problem we are solving here is, how to generate a short and unique key for a given URL.
 
-### Encoding Actual URL
+### Solution 01: Encoding Actual URL
 
 * Since we expect to have 500M new URLs per month, then we need **30 billion per 5 years**
 * Using base64 encoding, a **6 letters** long key would result in 64^6 =~ **68.7 billion possible strings**
@@ -143,7 +143,7 @@ Memory for cache    | 170GB
             http://www.educative.io/distributed.php?id=design
             http://www.educative.io/distributed.php%3Fid%3Ddesign 
 
-### Generating Keys Offline
+### Solution 02: Generating Keys Offline
 
 * We can have a standalone Key Generation Service (KGS) that generates random six-letter strings beforehand and stores them in a database (let’s call it key-DB).
 * Whenever we want to shorten a URL, we will just take one of the already-generated keys and use it.
@@ -155,4 +155,15 @@ Memory for cache    | 170GB
 ![](https://github.com/shamy1st/system-design-tiny-url/blob/main/lld.png)
 
 ## 8. Bottlenecks
+
+### Data Partitioning and Replication
+
+### Cache
+
+### Load Balancer (LB)
+
+### Purging or DB cleanup
+
+## 9. Security and Permissions
+
 
