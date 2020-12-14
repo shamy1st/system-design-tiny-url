@@ -178,10 +178,55 @@ Memory for cache    | 170GB
 
 ### Cache
 
+* We can cache URLs that are frequently accessed.
+* We can use some off-the-shelf solution like Memcached, which can store full URLs with their respective hashes.
+* The application servers, before hitting backend storage, can quickly check if the cache has the desired URL.
+* **How much cache memory should we have?**
+      * We can start with 20% of daily traffic and, based on clients’ usage pattern, we can adjust how many cache servers we need.
+      * As estimated above, we need 170GB memory to cache 20% of daily traffic.
+      * Since a modern-day server can have 256GB memory, we can easily fit all the cache into one machine.
+      * Alternatively, we can use a couple of smaller servers to store all these hot URLs.
+* **Which cache eviction policy would best fit our needs?**
+      * When the cache is full, and we want to replace a link with a newer/hotter URL, how would we choose?
+      * Least Recently Used (LRU) can be a reasonable policy for our system.
+      * Under this policy, we discard the least recently used URL first.
+      * We can use a Linked Hash Map or a similar data structure to store our URLs and Hashes, which will also keep track of the URLs that have been accessed recently.
+      * To further increase the efficiency, we can replicate our caching servers to distribute the load between them.
+* **How can each cache replica be updated?**
+      * Whenever there is a cache miss, our servers would be hitting a backend database.
+      * Whenever this happens, we can update the cache and pass the new entry to all the cache replicas.
+      * Each replica can update its cache by adding the new entry.
+      * If a replica already has that entry, it can simply ignore it.
+
 ### Load Balancer (LB)
+
+* We can add a Load balancing layer at three places in our system:
+      1. Between Clients and Application servers
+      2. Between Application Servers and database servers
+      3. Between Application Servers and Cache servers
+* Initially, we could use a simple Round Robin approach that distributes incoming requests equally among backend servers.
+* This LB is simple to implement and does not introduce any overhead.
+* Another benefit of this approach is that if a server is dead, LB will take it out of the rotation and will stop sending any traffic to it.
+* A problem with Round Robin LB is that we don’t take the server load into consideration.
+* If a server is overloaded or slow, the LB will not stop sending new requests to that server.
+* To handle this, a more intelligent LB solution can be placed that periodically queries the backend server about its load and adjusts traffic based on that.
 
 ### Purging or DB cleanup
 
+* Should entries stick around forever or should they be purged? If a user-specified expiration time is reached, what should happen to the link?
+* If we chose to actively search for expired links to remove them, it would put a lot of pressure on our database.
+* Instead, we can slowly remove expired links and do a lazy cleanup.
+* Our service will make sure that only expired links will be deleted, although some expired links can live longer but will never be returned to users.
+* A separate Cleanup service can run periodically to remove expired links from our storage and cache. This service should be very lightweight and can be scheduled to run only when the user traffic is expected to be low.
+* We can have a default expiration time for each link (e.g., two years).
+* After removing an expired link, we can put the key back in the key-DB to be reused.
+* Should we remove links that haven’t been visited in some length of time, say six months? This could be tricky. Since storage is getting cheap, we can decide to keep links forever.
+
 ## 9. Security and Permissions
 
-
+* Can users create private URLs or allow a particular set of users to access a URL?
+* We can store the permission level (public/private) with each URL in the database.
+* We can also create a separate table to store UserIDs that have permission to see a specific URL.
+* If a user does not have permission and tries to access a URL, we can send an error (HTTP 401) back.
+* Given that we are storing our data in a NoSQL wide-column database like Cassandra, the key for the table storing permissions would be the ‘Hash’ (or the KGS generated ‘key’).
+* The columns will store the UserIDs of those users that have the permission to see the URL.
